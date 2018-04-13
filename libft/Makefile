@@ -6,7 +6,7 @@
 #    By: jjanin-r <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2017/12/21 18:36:09 by jjanin-r     #+#   ##    ##    #+#        #
-#    Updated: 2018/03/28 18:56:03 by jjanin-r    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/04/13 13:31:11 by jjanin-r    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -43,7 +43,7 @@ FILES_LIBFT = ft_strlen.c ft_strdup.c ft_strcpy.c ft_strncpy.c ft_strcat.c\
 			  ft_lstdelone.c ft_lstdel.c ft_lstadd.c ft_lstiter.c ft_lstmap.c\
 			  ft_int_swap.c ft_gswap.c ft_intlen.c ft_print_strlst.c\
 			  ft_putstr2d.c get_next_line.c ft_itoa_base.c ft_str2dlen.c\
-			  ft_freestr2d.c\
+			  ft_freestr2d.c ft_strmerge.c\
 
 PATH_PRINTF = ./ft_printf/
 

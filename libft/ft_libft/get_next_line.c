@@ -1,115 +1,134 @@
 /* ************************************************************************** */
-/*                                                          LE - /            */
-/*                                                              /             */
-/*   get_next_line.c                                  .::    .:/ .      .::   */
-/*                                                 +:+:+   +:    +:  +:+:+    */
-/*   By: jjanin-r <marvin@le-101.fr>                +:+   +:    +:    +:+     */
-/*                                                 #+#   #+    #+    #+#      */
-/*   Created: 2017/12/09 22:42:46 by jjanin-r     #+#   ##    ##    #+#       */
-/*   Updated: 2018/03/16 18:37:24 by jjanin-r    ###    #+. /#+    ###.fr     */
-/*                                                         /                  */
-/*                                                        /                   */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pbondoer <pbondoer@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2016/02/16 19:11:50 by pbondoer          #+#    #+#             */
+/*   Updated: 2017/12/06 04:44:01 by pbondoer         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "get_next_line.h"
+#include <unistd.h>
 
-static char		*ft_strjoinfree(char **s1, char *s2)
-{
-	char *str;
-
-	if (!(str = malloc(ft_strlen(*s1) + ft_strlen(s2) + 1)))
-		return (NULL);
-	str[0] = '\0';
-	str = ft_strcat(str, *s1);
-	str = ft_strcat(str, s2);
-	ft_strdel(s1);
-	return (str);
-}
-
-static char		*get_fd(int fd, t_gnl *tab)
+static char		*get_append(t_gnl *gnl)
 {
 	int i;
 
 	i = 0;
-	while (tab[i].fd != -2)
+	gnl->nl = 0;
+	while (gnl->i + i < gnl->count)
 	{
-		if (fd == tab[i].fd)
-			return (tab[i].str);
-		i++;
-	}
-	tab[i].fd = fd;
-	tab[i].str = ft_strdup("");
-	return (tab[i].str);
-}
-
-static int		ft_ret(char **str, int ret, char **line)
-{
-	char	*tmp;
-	int		i;
-
-	i = 0;
-	if (!(*str))
-	{
-		*line = ft_strdup("");
-		return (0);
-	}
-	while ((*str)[i] && (*str)[i] != '\n')
-		i++;
-	if (!(*line = ft_strsub(*str, 0, i)))
-		return (-1);
-	if (i == 0 && (*str)[i] != '\n')
-		return (0);
-	if ((*str)[i] == '\n')
-	{
-		tmp = ft_strdup(*str + i + 1);
-		ft_strdel(str);
-		*str = tmp;
-	}
-	else if (!(*str)[i] && ret == 0)
-		ft_strdel(str);
-	return (1);
-}
-
-static void		ft_fillstr(t_gnl *tab, int fd, char *str)
-{
-	int i;
-
-	i = 0;
-	while (tab[i].fd != -2)
-	{
-		if (tab[i].fd == fd)
+		if (gnl->buf[gnl->i + i] == '\n')
 		{
-			tab[i].str = str;
+			gnl->nl = 1;
+			i++;
 			break ;
 		}
 		i++;
 	}
+	gnl->i += i;
+	return (ft_strsub(gnl->buf, gnl->i - i, i - gnl->nl));
 }
 
-int				get_next_line(int fd, char **line)
+static t_gnl	*get_gnl(t_list **lst, int fd)
 {
-	static t_gnl	tab[FDMAX];
-	char			buf[BUFF_SIZE + 1];
-	int				ret;
-	int				i;
-	char			*str;
+	t_gnl	gnl;
+	t_list	*temp;
 
-	i = 0;
-	if (fd < 0 || !line || read(fd, buf, 0) < 0)
-		return (-1);
-	if (tab[0].str == NULL)
-		while (i < FDMAX)
-			tab[i++].fd = -2;
-	str = get_fd(fd, tab);
-	while ((ret = read(fd, buf, BUFF_SIZE)))
+	temp = *lst;
+	while (temp)
 	{
-		buf[ret] = '\0';
-		if ((str = ft_strjoinfree(&str, buf)) == NULL || ret == -1)
-			return (-1);
-		if (ft_strchr(str, '\n') != NULL)
-			break ;
+		if (((t_gnl *)(temp->content))->fd == fd)
+			return ((t_gnl *)(temp->content));
+		temp = temp->next;
 	}
-	ret = ft_ret(&str, ret, line);
-	ft_fillstr(tab, fd, str);
-	return (ret);
+	gnl.buf = ft_strnew(BUFF_SIZE);
+	gnl.count = BUFF_SIZE;
+	gnl.i = BUFF_SIZE;
+	gnl.fd = fd;
+	gnl.nl = 1;
+	temp = ft_lstnew(&gnl, sizeof(t_gnl));
+	ft_lstadd(lst, temp);
+	return ((t_gnl *)(temp->content));
+}
+
+static void		del_gnl(t_list **lst, int fd, char **str)
+{
+	t_gnl	*gnl;
+	t_list	**temp;
+	t_list	*ptr;
+
+	temp = lst;
+	while (*temp)
+	{
+		gnl = (t_gnl *)((*temp)->content);
+		if (gnl->fd == fd)
+			break ;
+		*temp = ((*temp)->next);
+	}
+	if (*temp)
+	{
+		ptr = (*temp)->next;
+		ft_strdel(&(gnl->buf));
+		ft_memdel((void **)&gnl);
+		ft_memdel((void **)temp);
+		*temp = ptr;
+	}
+	ft_strdel(str);
+}
+
+static int		read_buffer(t_gnl *gnl, t_list **lst, char **temp, char **line)
+{
+	if (gnl->i == gnl->count)
+	{
+		gnl->count = read(gnl->fd, gnl->buf, BUFF_SIZE);
+		if (gnl->count == -1)
+		{
+			del_gnl(lst, gnl->fd, temp);
+			return (-1);
+		}
+		gnl->i = 0;
+		if (gnl->count == 0)
+		{
+			if (gnl->nl == 0)
+			{
+				*line = *temp;
+				return (1);
+			}
+		}
+	}
+	return (0);
+}
+
+int				get_next_line(int const fd, char **line)
+{
+	static t_list	*lst;
+	t_gnl			*gnl;
+	char			*temp;
+	int				ret;
+
+	if (fd < 0 || line == NULL)
+		return (-1);
+	gnl = get_gnl(&lst, fd);
+	temp = ft_strnew(0);
+	while (gnl->count > 0)
+	{
+		if ((ret = read_buffer(gnl, &lst, &temp, line)) != 0)
+			return (ret);
+		while (gnl->i < gnl->count)
+		{
+			temp = ft_strmerge(temp, get_append(gnl));
+			if (gnl->nl)
+			{
+				*line = temp;
+				return (1);
+			}
+		}
+	}
+	del_gnl(&lst, fd, &temp);
+	return (0);
 }
