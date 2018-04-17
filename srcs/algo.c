@@ -6,13 +6,13 @@
 /*   By: jjanin-r <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/04/12 18:29:33 by jjanin-r     #+#   ##    ##    #+#       */
-/*   Updated: 2018/04/13 17:20:20 by jjanin-r    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/04/17 20:43:10 by jjanin-r    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
 
 #include "../incs/filler.h"
-#include <math.h>
+
 int     ft_pow(int x, unsigned int y)
 {
 	int tmp;
@@ -63,12 +63,10 @@ void				test_play(t_filler *filler, int map_i, int map_j)
 		j = 0;
 		while (j < filler->piece->x)
 		{
-			if (map_i + i >= filler->map->y || map_j + j >= filler->map->x)
+			if ((piece_i + i >= filler->map->y || piece_j + j >= filler->map->x) ||
+				(filler->piece->save[i][j] == filler->me && filler->map->save[piece_i + i][piece_j + j] == filler->him ))
 				return ;
-			if ((filler->piece->save[i][j] == filler->me || filler->piece->save[i][j] == filler->me + 32) && (filler->map->save[piece_i + i][piece_j + j] == filler->him ||
-						filler->map->save[piece_i + i][piece_j + j] == filler->him + 32))
-				return ;
-			if (filler->piece->save[i][j] == filler->me && (filler->map->save[piece_i + i][piece_j + j] == filler->me || filler->map->save[piece_i + i][piece_j + j] == filler->me + 32))
+			if (filler->piece->save[i][j] == filler->me && filler->map->save[piece_i + i][piece_j + j] == filler->me)
 				cross++;
 			j++;
 		}
@@ -76,13 +74,14 @@ void				test_play(t_filler *filler, int map_i, int map_j)
 	}
 	if (cross != 1)
 		return ;
-	rating = sqrt(ft_pow(piece_i - filler->his_pos->y, 2) + ft_pow(piece_j - filler->his_pos->x, 2));
-//	dprintf(2, "\npiece y = %d, piece x = %d, rating = %f\n", piece_i, piece_j, rating);
+	rating = sqrt(ft_pow(piece_i - filler->to_rush->y, 2) + ft_pow(piece_j - filler->to_rush->x, 2));
 	if (rating < filler->push->rating)
 	{
 		filler->push->rating = rating;
 		filler->push->x = piece_j;
 		filler->push->y = piece_i;
+		filler->last_play->x = piece_j;
+		filler->last_play->y = piece_i;
 	}
 }
 
@@ -115,8 +114,7 @@ int					rush(t_filler *filler)
 		j = 0;
 		while (j < filler->map->x)
 		{
-			if (filler->map->save[i][j] == filler->me ||
-					filler->map->save[i][j] == filler->me + 32)
+			if (filler->map->save[i][j] == filler->me)
 					best_play(filler, i, j);
 			j++;
 		}

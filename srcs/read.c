@@ -6,7 +6,7 @@
 /*   By: jjanin-r <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/04/11 17:47:55 by jjanin-r     #+#   ##    ##    #+#       */
-/*   Updated: 2018/04/13 17:00:00 by jjanin-r    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/04/16 17:11:32 by jjanin-r    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -69,8 +69,10 @@ int				get_map(t_filler *filler)
 	{
 		get_next_line(0, &(filler->line));
 		filler->map->save[j] = ft_strdup(&filler->line[4]);
+//	dprintf(2, "map saved = %s\n", filler->map->save[j]);
 		j++;
 	}
+	dprintf(2, "\n");
 	return (1);
 }
 

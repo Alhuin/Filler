@@ -6,7 +6,7 @@
 /*   By: jjanin-r <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/04/12 16:00:24 by jjanin-r     #+#   ##    ##    #+#       */
-/*   Updated: 2018/04/13 17:20:34 by jjanin-r    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/04/17 20:03:02 by jjanin-r    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -34,34 +34,38 @@ int					main(void)
 	filler.push->y = 0;
 	filler.push->rating = 1000000000000000;
 	filler.my_pos = malloc(sizeof(t_point));
+	filler.last_play = malloc(sizeof(t_point));
 	filler.his_pos = malloc(sizeof(t_map));
 	filler.to_rush = malloc(sizeof(t_map));
+	filler.u_block = 0;
+	filler.d_block = 0;
+	filler.r_block = 0;
+	filler.l_block = 0;
+	filler.zone = 0;
 	while (101)
 	{
 		i = 0;
 		j = 0;
 		filler.push->x = -1;
 		filler.push->y = -1;
-		filler.push->rating = 1000000000000000;
 		if (start == 1)
 			get_player(&filler);
 		get_map(&filler);
 		get_next_line(0, &filler.line);
 		get_piece(&filler);
+		filler.to_rush->rating = 1000000000000000;
 		if (start == 1)
-		{
-			get_position(&filler);
-		}
+			get_first_position(&filler);
+		else
+			define_to_rush(&filler);
+		filler.push->rating = 1000000000000000;
 		rush(&filler);
-//		dprintf(2, "to push x = %d\n", filler.push->x);
-//		dprintf(2, "to push y = %d\n", filler.push->y);
 		if (filler.push->x == -1 || filler.push->y == -1)
 		{
 			ft_printf("0 0\n");
 			break ;
 		}
 		ft_printf("%d %d\n", filler.push->y, filler.push->x);
-//		dprintf(2, "pushed\n");
 		while (i < filler.map->y)
 			ft_strdel(&filler.map->save[i++]);
 		free(filler.map->save);
@@ -69,6 +73,7 @@ int					main(void)
 			ft_strdel(&filler.piece->save[j++]);
 		free(filler.piece->save);
 		start = 0;
+		//dprintf(2, "*********************************************************YOU PLAYED*******************************************************************************");
 		get_next_line(0, &filler.line);
 	}
 		while (i < filler.map->y)
