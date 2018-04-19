@@ -6,7 +6,7 @@
 #    By: jmonneri <marvin@le-101.fr>                +:+   +:    +:    +:+      #
 #                                                  #+#   #+    #+    #+#       #
 #    Created: 2017/12/14 19:15:23 by jmonneri     #+#   ##    ##    #+#        #
-#    Updated: 2018/04/13 17:39:16 by jjanin-r    ###    #+. /#+    ###.fr      #
+#    Updated: 2018/04/19 13:39:24 by jjanin-r    ###    #+. /#+    ###.fr      #
 #                                                          /                   #
 #                                                         /                    #
 # **************************************************************************** #
@@ -15,14 +15,14 @@
 
 NAME = jjanin-r.filler
 CC = gcc
-CC_FLAGS = -Wall -Wextra -Werror
+CC_FLAGS = -Wall -Wextra -Werror -g
 PATH_LIBFT = ./libft/
 PATH_SRC = ./srcs/
 PATH_INC = ./incs/
 SRC = $(addprefix $(PATH_SRC), $(FILES))
 SRCO = $(SRC:.c=.o)
 INC = $(addprefix $(PATH_INC), filler.h)
-FILES = main.c read.c position.c algo.c
+FILES = main.c read.c position.c algo.c utils.c
 
 #******************************************************************************#
 #                                    RULES                                     #

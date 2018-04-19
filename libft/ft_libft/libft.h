@@ -6,7 +6,7 @@
 /*   By: jjanin-r <marvin@le-101.fr>                +:+   +:    +:    +:+     */
 /*                                                 #+#   #+    #+    #+#      */
 /*   Created: 2018/01/10 16:31:36 by jjanin-r     #+#   ##    ##    #+#       */
-/*   Updated: 2018/04/13 13:32:10 by jjanin-r    ###    #+. /#+    ###.fr     */
+/*   Updated: 2018/04/19 13:32:47 by jjanin-r    ###    #+. /#+    ###.fr     */
 /*                                                         /                  */
 /*                                                        /                   */
 /* ************************************************************************** */
@@ -94,4 +94,6 @@ char				*ft_itoa_base(int value, int base);
 int					ft_printf(const char *restrict format, ...);
 int					ft_str2dlen(char **str);
 char				*ft_strmerge(char *a, char *b);
+float				ft_sqrt(float number);
+int					ft_pow(int x, unsigned int y);
 #endif
